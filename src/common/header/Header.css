@@ -8,8 +8,6 @@
     background-color: #ff7f7f;
     height: 35px;
     float: left;
-    /* transform: rotate(90deg);
-    transition: all 8s ease-in-out; */
     animation: rotation 8s infinite linear;
 }
 

@@ -1,42 +1,32 @@
 import React, { useContext } from "react";
-import { UserLoginContext } from "../../screens/UserLoginContext";
+import { UserLoginContext } from "../UserLoginContext";
 import logo from "../../assets/logo.svg";
 import { Button } from "@material-ui/core";
 import "./Header.css";
 import { Link, useLocation } from 'react-router-dom';
 import { Fragment } from "react";
 
-const Header = (props) => {
+const Header = (bookShowHandler) => {
 
-   const userLoggedIn = useContext(UserLoginContext);
+    const userLoggedIn = useContext(UserLoginContext);
 
     const location = useLocation();
 
     const loginOrLogOut = userLoggedIn ? "LOGOUT" : "LOGIN";
 
-    function bookShowClickHandler() {
-        if (userLoggedIn) {
-            return "/bookShow"; // TODO: Update
-        } else {
-            // TODO: Modal should pop up
-        }
-    }
-
     function displayBookShow() {
         console.log(`location = ${location}`) // TODO: Remove after debugging
         if (location === "/") { // TODO: Add expected location
-            return (
-                <Fragment>
-                    <Link to={bookShowClickHandler}>
-                        <Button id="book-show" variant="contained" color="primary" >BOOKSHOW</Button>)
-                    </Link>
-                </Fragment>
-            )
+            if (userLoggedIn) {
+                return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow">BOOKSHOW</Button>;
+            } else {
+                return <Button id="book-show" variant="contained" color="primary" onClick={bookShowHandler}>BOOKSHOW</Button> // TODO: Modal pop up code
+            }
         }
     }
 
     function loginLogoutHandler(e) {
-        if(e.target.name === "LOGIN") {
+        if (e.target.name === "LOGIN") {
             loginHandler();
         } else {
             logouthandler();
