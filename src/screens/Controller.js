@@ -129,7 +129,7 @@ const Controller = () => {
 
     const search = data => {
 
-        let filertredResult = allMoviesList.filter(movies => {
+        let filteredResult = allMoviesList.filter(movies => {
             let filter = true;
 
             if (movies.title && !movies.title.includes(data.movieName)) {
@@ -167,8 +167,8 @@ const Controller = () => {
             return filter;
         })
 
-        if (filertredResult != null && filertredResult != [])
-            setReleasedMovies(filertredResult);
+        if (filteredResult !== null && filteredResult !== [])
+            setReleasedMovies(filteredResult);
     }
 
     useEffect(() => {
@@ -182,10 +182,6 @@ const Controller = () => {
             <UserLoginContext.Provider value={userLoggedIn}>
                 <Header logoutHandler={logoutHandler} />
             </UserLoginContext.Provider>
-            {/* <Switch location={background || location}>
-                <Route path="/bookShow" exact component={BookShow} />
-            </Switch> */}
-
 
             <Switch location={background || location}>
                 <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} allMoviesList={allMoviesList} genres={genres} releasedMovies={releasedMovies} artists={artists} search={(data) => search(data)} />} />

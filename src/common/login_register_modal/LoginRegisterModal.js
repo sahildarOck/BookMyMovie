@@ -18,15 +18,6 @@ const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
 
     const history = useHistory();
 
-    // function openModal() {
-    //     setIsOpen(true);
-    // }
-
-    // function afterOpenModal() {
-    //     // references are now sync'd and can be accessed.
-    //     // subtitle.style.color = '#f00';
-    // }
-
     function closeModal() {
         setIsOpen(false);
         history.goBack();
@@ -67,7 +58,6 @@ const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
         <Modal
             className="modal"
             isOpen={modalIsOpen}
-            // onAfterOpen={afterOpenModal}
             onRequestClose={closeModal}
             appElement={document.getElementById('root')}
         >

@@ -38,7 +38,7 @@ const styles = makeStyles((theme) => ({
         cursor: 'pointer'
     },
     formControl: {
-        margin: theme.spacing.unit,
+        margin: theme.spacing(),
         minWidth: 240,
         maxWidth: 240
     },
@@ -48,7 +48,7 @@ const styles = makeStyles((theme) => ({
 }));
 
 
-export default function Home({ history, allMoviesList, genres, releasedMovies, artists, search }) {
+const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search }) => {
     const classes = styles();
 
     const [moviesList, setMoviesList] = useState({
@@ -214,3 +214,5 @@ export default function Home({ history, allMoviesList, genres, releasedMovies, a
         </div >
     );
 }
+
+export default Home;

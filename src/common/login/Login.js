@@ -27,13 +27,13 @@ const Login = ({ clickLoginHandler }) => {
         <Fragment>
             <ValidatorForm className="login-form" onSubmit={onFormSubmitted}>
                 <FormControl>
-                    <InputLabel htmlFor="username">Username</InputLabel>
+                    <InputLabel htmlFor="username">Username *</InputLabel>
                     <Input type= "text" required={true} id="username" name="username" onChange={inputChangedHandler} value={loginForm.username} />
                 </FormControl>
                 <br />
                 <br />
                 <FormControl>
-                    <InputLabel htmlFor="password">Password</InputLabel>
+                    <InputLabel htmlFor="password">Password *</InputLabel>
                     <Input type="password" id="password" required={true} name="password" onChange={inputChangedHandler} value={loginForm.password} />
                 </FormControl>
                 <br />
