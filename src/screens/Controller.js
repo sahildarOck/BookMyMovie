@@ -187,11 +187,12 @@ const Controller = () => {
             </Switch> */}
 
 
-
-            <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} allMoviesList={allMoviesList} genres={genres} releasedMovies={releasedMovies} artists={artists} search={(data) => search(data)} />} />
-            <Route path='/movie/:id' render={(props) => <Details {...props} allMoviesList={allMoviesList} />} />
-            <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
-            <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
+            <Switch location={background || location}>
+                <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} allMoviesList={allMoviesList} genres={genres} releasedMovies={releasedMovies} artists={artists} search={(data) => search(data)} />} />
+                <Route path='/movie/:id' render={(props) => <Details {...props} allMoviesList={allMoviesList} />} />
+                <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
+                <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
+            </Switch>
 
 
             {background && <Route path="/login-register-modal" children={<LoginRegisterModal loginHandler={loginHandler} registerUserHandler={registerUserHandler} />} />}
