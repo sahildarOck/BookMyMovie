@@ -4,41 +4,45 @@ import logo from "../../assets/logo.svg";
 import { Button } from "@material-ui/core";
 import "./Header.css";
 import { Link, useLocation } from 'react-router-dom';
-import { Fragment } from "react";
 
-const Header = (bookShowHandler) => {
+const Header = ({ logoutHandler }) => {
 
     const userLoggedIn = useContext(UserLoginContext);
 
     const location = useLocation();
 
-    const loginOrLogOut = userLoggedIn ? "LOGOUT" : "LOGIN";
-
-    function displayBookShow() {
-        console.log(`location = ${location}`) // TODO: Remove after debugging
-        if (location === "/") { // TODO: Add expected location
+    const displayBookShow = () => {
+        if (location.pathname === "/movie/*") { // TODO: Add expected location
             if (userLoggedIn) {
                 return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow">BOOKSHOW</Button>;
             } else {
-                return <Button id="book-show" variant="contained" color="primary" onClick={bookShowHandler}>BOOKSHOW</Button> // TODO: Modal pop up code
+                return (
+                    <Link
+                        to={{
+                            pathname: "/login-register-modal",
+                            state: { background: location }
+                        }}>
+                        <Button id="book-show" variant="contained" color="primary">BOOKSHOW</Button>
+                    </Link>
+                )
             }
         }
     }
 
-    function loginLogoutHandler(e) {
-        if (e.target.name === "LOGIN") {
-            loginHandler();
+    const displayLoginOrLogout = () => {
+        if (userLoggedIn) {
+            return <Button className="user-state-btn" id="logout-btn" variant="contained" name="logout-btn" onClick={logoutHandler}>LOGOUT</Button>
         } else {
-            logouthandler();
+            return (
+                <Link
+                    to={{
+                        pathname: "/login-register-modal",
+                        state: { background: location }
+                    }}>
+                    <Button className="user-state-btn" id="login-btn" variant="contained" name="login-btn">LOGIN</Button>
+                </Link >
+            )
         }
-    }
-
-    function loginHandler() {
-
-    }
-
-    function logouthandler() {
-
     }
 
     return (
@@ -46,9 +50,9 @@ const Header = (bookShowHandler) => {
             <div className="logo">
                 <img alt="Logo" className="rotate" src={logo} />
             </div>
-            <div className="button">
+            <div className="btn">
                 {displayBookShow()}
-                <Button id="login-logout" variant="contained" name={loginOrLogOut} onClick={loginLogoutHandler}>{loginOrLogOut}</Button>
+                {displayLoginOrLogout()}
             </div>
         </div>
     )
