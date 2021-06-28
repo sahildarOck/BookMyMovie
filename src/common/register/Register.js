@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { FormControl, FormLabel, Input, InputLabel } from '@material-ui/core';
+import { FormLabel } from '@material-ui/core';
 import { Fragment } from "react";
 import Button from '@material-ui/core/Button';
 import { ValidatorForm, TextValidator } from 'react-material-ui-form-validator'
@@ -81,8 +81,8 @@ const Register = ({ registerUserHandler }) => {
                     name="email_address"
                     onChange={inputChangedHandler}
                     value={registerUserForm.email_address}
-                    validators={['required']}
-                    errorMessages={['required']}
+                    validators={['required', 'isEmail']}
+                    errorMessages={['required', 'Not an email']}
                 />
                 {/* <FormControl required={true}>
                     <InputLabel htmlFor="email_address">Email</InputLabel>
@@ -95,7 +95,7 @@ const Register = ({ registerUserHandler }) => {
                     className="register-field"
                     id="password"
                     label="Password *"
-                    type="text"
+                    type="password"
                     name="password"
                     onChange={inputChangedHandler}
                     value={registerUserForm.password}

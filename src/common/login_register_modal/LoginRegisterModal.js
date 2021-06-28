@@ -8,6 +8,7 @@ import Box from '@material-ui/core/Box';
 import Login from "../login/Login"
 import Register from "../register/Register";
 import "./LogisRegisterModal.css";
+import { useHistory } from "react-router-dom";
 
 
 const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
@@ -15,17 +16,20 @@ const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
     const [modalIsOpen, setIsOpen] = useState(true);
     const [value, setValue] = useState(0);
 
-    function openModal() {
-        setIsOpen(true);
-    }
+    const history = useHistory();
 
-    function afterOpenModal() {
-        // references are now sync'd and can be accessed.
-        // subtitle.style.color = '#f00';
-    }
+    // function openModal() {
+    //     setIsOpen(true);
+    // }
+
+    // function afterOpenModal() {
+    //     // references are now sync'd and can be accessed.
+    //     // subtitle.style.color = '#f00';
+    // }
 
     function closeModal() {
         setIsOpen(false);
+        history.goBack();
     }
 
     const handleChange = (event, newValue) => {
@@ -52,11 +56,18 @@ const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
         );
     }
 
+    const clickLoginHandler = async (username, password) => {
+        const loginSuccessful = await loginHandler(username, password);
+        if (loginSuccessful) {
+            closeModal();
+        }
+    }
+
     return (
         <Modal
             className="modal"
             isOpen={modalIsOpen}
-            onAfterOpen={afterOpenModal}
+            // onAfterOpen={afterOpenModal}
             onRequestClose={closeModal}
             appElement={document.getElementById('root')}
         >
@@ -70,7 +81,7 @@ const LoginRegisterModal = ({ loginHandler, registerUserHandler }) => {
                 </Tabs>
 
                 <TabPanel value={value} index={0}>
-                    <Login loginHandler={loginHandler} />
+                    <Login clickLoginHandler={clickLoginHandler} />
                 </TabPanel>
 
                 <TabPanel value={value} index={1}>

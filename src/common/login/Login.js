@@ -1,11 +1,10 @@
-import React, { useState } from "react";
+import React, { useState, Fragment } from "react";
 import { FormControl, Input, InputLabel } from '@material-ui/core';
-import { Fragment } from "react";
 import Button from '@material-ui/core/Button';
-import "./Login.css"
+import "./Login.css";
 import { ValidatorForm } from 'react-material-ui-form-validator'
 
-const Login = ({ loginHandler }) => {
+const Login = ({ clickLoginHandler }) => {
 
     const [loginForm, setLoginForm] = useState({
         username: '',
@@ -21,29 +20,29 @@ const Login = ({ loginHandler }) => {
 
     const onFormSubmitted = e => {
         e.preventDefault();
-        loginHandler(loginForm.username, loginForm.password);
+        clickLoginHandler(loginForm.username, loginForm.password);
     }
 
     return (
         <Fragment>
-            {/* <ValidatorForm className="login-form" onSubmit={onFormSubmitted}> */}
-                <FormControl required={true}>
+            <ValidatorForm className="login-form" onSubmit={onFormSubmitted}>
+                <FormControl>
                     <InputLabel htmlFor="username">Username</InputLabel>
-                    <Input id="username" name="username" onChange={inputChangedHandler} value={loginForm.username} />
+                    <Input type= "text" required={true} id="username" name="username" onChange={inputChangedHandler} value={loginForm.username} />
                 </FormControl>
                 <br />
                 <br />
-                <FormControl required={true}>
+                <FormControl>
                     <InputLabel htmlFor="password">Password</InputLabel>
-                    <Input id="password" name="password" onChange={inputChangedHandler} value={loginForm.password} />
+                    <Input type="password" id="password" required={true} name="password" onChange={inputChangedHandler} value={loginForm.password} />
                 </FormControl>
                 <br />
                 <br />
                 <br />
-                <Button id="login-btn" variant="contained" color="primary" type="submit" onClick={onFormSubmitted}>
+                <Button id="login-btn" variant="contained" color="primary" type="submit">
                     LOGIN
                 </Button>
-            {/* </ValidatorForm> */}
+            </ValidatorForm>
         </Fragment>
     )
 }
