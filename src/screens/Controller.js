@@ -1,5 +1,8 @@
-import React, { useState } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../common/header/Header";
+import Home from '../screens/home/Home';
+import Details from '../screens/details/Details';
+import Confirmation from '../screens/confirmation/Confirmation';
 import { UserLoginContext } from "../common/UserLoginContext";
 import { Route, Switch, useLocation } from "react-router-dom";
 import BookShow from "./bookshow/BookShow"
@@ -9,6 +12,11 @@ const Controller = () => {
 
     const location = useLocation();
     const background = location.state && location.state.background;
+
+    const [allMoviesList, setAllMoviesList] = useState([]);
+    const [releasedMovies, setReleasedMovies] = useState([]);
+    const [genres, setGenres] = useState([]);
+    const [artists, setArtists] = useState([]);
 
     const isUserLoggedIn = () => {
         return getAccessToken() !== null;
@@ -97,14 +105,94 @@ const Controller = () => {
         }
     }
 
+    async function loadData() {
+
+        const rawResponse = await fetch("http://localhost:8085/api/v1/movies")
+        const data = await rawResponse.json()
+        setAllMoviesList(data.movies);
+        setReleasedMovies(data.movies);
+    }
+
+    async function loadGenres() {
+
+        const rawResponse = await fetch("http://localhost:8085/api/v1/genres")
+        const data = await rawResponse.json()
+        setGenres(data.genres);
+    }
+
+    async function loadArtists() {
+
+        const rawResponse = await fetch("http://localhost:8085/api/v1/artists")
+        const data = await rawResponse.json()
+        setArtists(data.artists);
+    }
+
+    const search = data => {
+
+        let filertredResult = allMoviesList.filter(movies => {
+            let filter = true;
+
+            if (movies.title && !movies.title.includes(data.movieName)) {
+                filter = false;
+            }
+
+            if (filter && movies.genres && data.genres.length > 0) {
+                const filteredGenresResult = data.genres.filter(gen => {
+                    return movies.genres.includes(gen);
+                })
+
+                if (filteredGenresResult.length === 0) {
+                    filter = false;
+                }
+            }
+
+
+            if (filter && movies.artists && data.artists.length > 0) {
+                const filteredArtistResult = data.artists.filter(art => {
+                    const innerFilter = movies.artists.filter(artM => {
+                        let fullname = artM.first_name + " " + artM.last_name;
+                        return fullname === art;
+                    })
+
+                    return innerFilter.length !== 0;
+
+                })
+
+                if (filteredArtistResult.length === 0) {
+                    filter = false;
+                }
+
+            }
+
+            return filter;
+        })
+
+        if (filertredResult != null && filertredResult != [])
+            setReleasedMovies(filertredResult);
+    }
+
+    useEffect(() => {
+        loadData();
+        loadGenres();
+        loadArtists();
+    }, [])
+
     return (
-        <div>
+        <div className="main-container">
             <UserLoginContext.Provider value={userLoggedIn}>
                 <Header logoutHandler={logoutHandler} />
             </UserLoginContext.Provider>
-            <Switch location={background || location}>
+            {/* <Switch location={background || location}>
                 <Route path="/bookShow" exact component={BookShow} />
-            </Switch>
+            </Switch> */}
+
+
+
+            <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} allMoviesList={allMoviesList} genres={genres} releasedMovies={releasedMovies} artists={artists} search={(data) => search(data)} />} />
+            <Route path='/movie/:id' render={(props) => <Details {...props} allMoviesList={allMoviesList} />} />
+            <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
+            <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
+
 
             {background && <Route path="/login-register-modal" children={<LoginRegisterModal loginHandler={loginHandler} registerUserHandler={registerUserHandler} />} />}
         </div>
