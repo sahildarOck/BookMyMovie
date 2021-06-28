@@ -8,7 +8,7 @@ import GridListTileBar from '@material-ui/core/GridListTileBar';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
 import { Link } from 'react-router-dom';
 
-export default function Details(props){
+const Details = (props) => {
 
     const [selectedMovie,setMovie] = useState( {
                     movie: {},
@@ -165,3 +165,5 @@ export default function Details(props){
         </div>
     )
 }
+
+export default Details;

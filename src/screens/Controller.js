@@ -105,23 +105,20 @@ const Controller = () => {
         }
     }
 
-    async function loadData() {
-
+    const loadData = async () => {
         const rawResponse = await fetch("http://localhost:8085/api/v1/movies")
         const data = await rawResponse.json()
         setAllMoviesList(data.movies);
         setReleasedMovies(data.movies);
     }
 
-    async function loadGenres() {
-
+    const loadGenres = async () => {
         const rawResponse = await fetch("http://localhost:8085/api/v1/genres")
         const data = await rawResponse.json()
         setGenres(data.genres);
     }
 
-    async function loadArtists() {
-
+    const loadArtists = async () => {
         const rawResponse = await fetch("http://localhost:8085/api/v1/artists")
         const data = await rawResponse.json()
         setArtists(data.artists);
