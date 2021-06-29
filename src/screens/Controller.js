@@ -1,9 +1,9 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useCallback } from "react";
 import Header from "../common/header/Header";
 import Home from '../screens/home/Home';
 import Details from '../screens/details/Details';
 import Confirmation from '../screens/confirmation/Confirmation';
-import { UserLoginContext } from "../common/UserLoginContext";
+import { UserLoggedinContext } from "../common/UserLoggedinContext";
 import { Route, Switch, useLocation } from "react-router-dom";
 import BookShow from "./bookshow/BookShow"
 import LoginRegisterModal from "../common/login_register_modal/LoginRegisterModal";
@@ -13,10 +13,54 @@ const Controller = () => {
     const location = useLocation();
     const background = location.state && location.state.background;
 
-    const [allMoviesList, setAllMoviesList] = useState([]);
-    const [releasedMovies, setReleasedMovies] = useState([]);
-    const [genres, setGenres] = useState([]);
-    const [artists, setArtists] = useState([]);
+    const [data, setData] = useState({
+        upcomingMovies: [],
+        releasedMovies: [],
+        genres: [],
+        artists: []
+    });
+
+    const loadData = async () => {
+        const tempData = data;
+
+        const moviesList = await getMoviesList();
+
+        tempData.upcomingMovies = moviesList[0];
+        tempData.releasedMovies = moviesList[1];
+        tempData.genres = await getGenres();
+        tempData.artists = await getArtists();
+
+        console.log([...tempData.upcomingMovies])
+        console.log([...tempData.releasedMovies])
+        console.log([...tempData.genres])
+        console.log([...tempData.artists])
+
+        setData({...tempData});
+    }
+
+    const getMoviesList = async () => {
+        const moviesList = [];
+        const rawResponse = await fetch("http://localhost:8085/api/v1/movies?page=1&limit=20");
+        const data = await rawResponse.json();
+
+        moviesList.push(data.movies.filter(item => item.status === 'PUBLISHED'));
+
+        moviesList.push(data.movies.filter(item => item.status === 'RELEASED'));
+
+        return moviesList;
+    }
+
+    const getGenres = async () => {
+        const rawResponse = await fetch("http://localhost:8085/api/v1/genres")
+        const data = await rawResponse.json()
+        return data.genres;
+    }
+
+    const getArtists = async () => {
+        const rawResponse = await fetch("http://localhost:8085/api/v1/artists")
+        const data = await rawResponse.json()
+        return data.artists;
+    }
 
     const isUserLoggedIn = () => {
         return getAccessToken() !== null;
@@ -55,7 +99,6 @@ const Controller = () => {
     }
 
     const registerUserHandler = async (registerUserForm) => {
-        debugger;
         console.log(registerUserForm);
         const rawResponse = await fetch("http://localhost:8085/api/v1/signup",
             {
@@ -67,11 +110,7 @@ const Controller = () => {
             }
         );
 
-        debugger;
         const data = await rawResponse.json();
-
-        debugger;
-        console.log(data);
 
         if (data && "ACTIVE" === data.status) {
             return true;
@@ -105,36 +144,19 @@ const Controller = () => {
         }
     }
 
-    const loadData = async () => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/movies")
-        const data = await rawResponse.json()
-        setAllMoviesList(data.movies);
-        setReleasedMovies(data.movies);
-    }
+    const filterMovies = filterCriteria => {
 
-    const loadGenres = async () => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/genres")
-        const data = await rawResponse.json()
-        setGenres(data.genres);
-    }
+        debugger;
 
-    const loadArtists = async () => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/artists")
-        const data = await rawResponse.json()
-        setArtists(data.artists);
-    }
-
-    const search = data => {
-
-        let filteredResult = allMoviesList.filter(movies => {
+        let filteredResult = data.releasedMovies.filter(movies => {
             let filter = true;
 
-            if (movies.title && !movies.title.includes(data.movieName)) {
+            if (movies.title && !movies.title.includes(filterCriteria.movieName)) {
                 filter = false;
             }
 
-            if (filter && movies.genres && data.genres.length > 0) {
-                const filteredGenresResult = data.genres.filter(gen => {
+            if (filter && movies.genres && filterCriteria.genres.length > 0) {
+                const filteredGenresResult = filterCriteria.genres.filter(gen => {
                     return movies.genres.includes(gen);
                 })
 
@@ -144,8 +166,8 @@ const Controller = () => {
             }
 
 
-            if (filter && movies.artists && data.artists.length > 0) {
-                const filteredArtistResult = data.artists.filter(art => {
+            if (filter && movies.artists && filterCriteria.artists.length > 0) {
+                const filteredArtistResult = filterCriteria.artists.filter(art => {
                     const innerFilter = movies.artists.filter(artM => {
                         let fullname = artM.first_name + " " + artM.last_name;
                         return fullname === art;
@@ -165,24 +187,23 @@ const Controller = () => {
         })
 
         if (filteredResult !== null && filteredResult !== [])
-            setReleasedMovies(filteredResult);
+            return filteredResult;
     }
 
     useEffect(() => {
+        debugger;
         loadData();
-        loadGenres();
-        loadArtists();
     }, [])
 
     return (
         <div className="main-container">
-            <UserLoginContext.Provider value={userLoggedIn}>
+            <UserLoggedinContext.Provider value={userLoggedIn}>
                 <Header logoutHandler={logoutHandler} />
-            </UserLoginContext.Provider>
+            </UserLoggedinContext.Provider>
 
             <Switch location={background || location}>
-                <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} allMoviesList={allMoviesList} genres={genres} releasedMovies={releasedMovies} artists={artists} search={(data) => search(data)} />} />
-                <Route path='/movie/:id' render={(props) => <Details {...props} allMoviesList={allMoviesList} />} />
+                <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} data = {data} search={(data) => filterMovies(data)} />} />
+                <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} />} />
                 <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
                 <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
             </Switch>
@@ -193,4 +214,4 @@ const Controller = () => {
     )
 }
 
-export default Controller;
+export default Controller; 

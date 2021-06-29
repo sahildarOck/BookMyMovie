@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import './Home.css';
 import { makeStyles } from '@material-ui/core/styles';
 import GridList from '@material-ui/core/GridList';
@@ -47,11 +47,11 @@ const styles = makeStyles((theme) => ({
     }
 }));
 
+const Home = ({ history, data, search }) => {
 
-const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search }) => {
     const classes = styles();
 
-    const [moviesList, setMoviesList] = useState({
+    const [filterCriteria, setFilterCriteria] = useState({
         movieName: "",
         genres: [],
         artists: [],
@@ -60,46 +60,53 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
 
     });
 
-    function movieNameChangeHandler(event) {
-        const movie = moviesList;
-        movie['movieName'] = event.target.value;
-        setMoviesList({ ...movie });
-        console.log(movie)
+    const [displayMoviesList, setDisplayMoviesList] = useState(data.releasedMovies);
+    console.log(`Display: ${JSON.stringify(displayMoviesList)}`);
+
+    const movieNameChangeHandler = (event) => {
+        const filter = filterCriteria;
+        filter['movieName'] = event.target.value;
+        setFilterCriteria({ ...filter });
     }
 
-    function genreSelectHandler(event) {
-        const movie = moviesList;
-        movie['genres'] = event.target.value;
-        setMoviesList({ ...movie });
-        console.log(movie)
+    const genreSelectHandler = (event) => {
+        const filter = filterCriteria;
+        filter['genres'] = event.target.value;
+        setFilterCriteria({ ...filter });
     }
 
-    function artistSelectHandler(event) {
-        const movie = moviesList;
-        movie['artists'] = event.target.value;
-        setMoviesList({ ...movie });
-        console.log(movie)
+    const artistSelectHandler = (event) => {
+        const filter = filterCriteria;
+        filter['artists'] = event.target.value;
+        setFilterCriteria({ ...filter });
     }
 
-
-    function releaseDateStartHandler(event) {
-        const movie = moviesList;
-        movie['release_date_start'] = event.target.value;
-        setMoviesList({ ...movie });
-        console.log(movie)
+    const releaseDateStartHandler = (event) => {
+        const filter = filterCriteria;
+        filter['release_date_start'] = event.target.value;
+        setFilterCriteria({ ...filter });
     }
 
-    function releaseDateEndHandler(event) {
-        const movie = moviesList;
-        movie['release_date_end'] = event.target.value;
-        setMoviesList({ ...movie });
-        console.log(movie)
+    const releaseDateEndHandler = (event) => {
+        const filter = filterCriteria;
+        filter['release_date_end'] = event.target.value;
+        setFilterCriteria({ ...filter });
     }
 
-    function movieClickHandler(movieId) {
+    const movieClickHandler = (movieId) => {
         history.push('/movie/' + movieId);
     }
 
+    const applyClickHandler = async () => {
+        const filteredMovieList = await search(filterCriteria);
+        debugger;
+        console.log(`Filtered Movie List: ${JSON.stringify(filteredMovieList)}`);
+        setDisplayMoviesList(filteredMovieList);
+    }
+
+    useEffect(() => {
+        setDisplayMoviesList(data.releasedMovies);
+    }, [data.releasedMovies]);
 
     return (
         <div>
@@ -108,7 +115,7 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
             </div>
 
             <GridList cols={5} className={classes.gridListUpcomingMovies} >
-                {allMoviesList.map(movie => (
+                {data.upcomingMovies.map(movie => (
                     <GridListTile key={movie.id}>
                         <img src={movie.poster_url} className="movie-poster" alt={movie.title} />
                         <GridListTileBar title={movie.title} />
@@ -119,7 +126,7 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
             <div className="flex-container">
                 <div className="left">
                     <GridList cellHeight={350} cols={4} className={classes.gridListMain}>
-                        {releasedMovies.map(movie => (
+                        {displayMoviesList.map(movie => (
                             <GridListTile onClick={() => movieClickHandler(movie.id)} className="released-movie-grid-item" key={"grid" + movie.id}>
                                 <img src={movie.poster_url} className="movie-poster" alt={movie.title} />
                                 <GridListTileBar
@@ -150,12 +157,12 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
                                     multiple
                                     input={<Input id="select-multiple-checkbox-genre" />}
                                     renderValue={selected => selected.join(',')}
-                                    value={moviesList.genres}
+                                    value={filterCriteria.genres}
                                     onChange={genreSelectHandler}
                                 >
-                                    {genres.map(genre => (
+                                    {data.genres.map(genre => (
                                         <MenuItem key={genre.id} value={genre.genre}>
-                                            <Checkbox checked={moviesList.genres.indexOf(genre.genre) > -1} />
+                                            <Checkbox checked={filterCriteria.genres.indexOf(genre.genre) > -1} />
                                             <ListItemText primary={genre.genre} />
                                         </MenuItem>
                                     ))}
@@ -168,12 +175,12 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
                                     multiple
                                     input={<Input id="select-multiple-checkbox" />}
                                     renderValue={selected => selected.join(',')}
-                                    value={moviesList.artists}
+                                    value={filterCriteria.artists}
                                     onChange={artistSelectHandler}
                                 >
-                                    {artists.map(artist => (
+                                    {data.artists.map(artist => (
                                         <MenuItem key={artist.id} value={artist.first_name + " " + artist.last_name}>
-                                            <Checkbox checked={moviesList.artists.indexOf(artist.first_name + " " + artist.last_name) > -1} />
+                                            <Checkbox checked={filterCriteria.artists.indexOf(artist.first_name + " " + artist.last_name) > -1} />
                                             <ListItemText primary={artist.first_name + " " + artist.last_name} />
                                         </MenuItem>
                                     ))}
@@ -203,7 +210,7 @@ const Home = ({ history, allMoviesList, genres, releasedMovies, artists, search 
                             </FormControl>
                             <br /><br />
                             <FormControl className={classes.formControl}>
-                                <Button variant="contained" color="primary" onClick={() => search(moviesList)}>
+                                <Button variant="contained" color="primary" onClick={applyClickHandler}>
                                     APPLY
                                 </Button>
                             </FormControl>

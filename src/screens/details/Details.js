@@ -10,77 +10,76 @@ import { Link } from 'react-router-dom';
 
 const Details = (props) => {
 
-    const [selectedMovie,setMovie] = useState( {
-                    movie: {},
-                    starIcons: [{
-                        id: 1,
-                        stateId: "star1",
-                        color: "black"
-                    },
-                    {
-                        id: 2,
-                        stateId: "star2",
-                        color: "black"
-                    },
-                    {
-                        id: 3,
-                        stateId: "star3",
-                        color: "black"
-                    },
-                    {
-                        id: 4,
-                        stateId: "star4",
-                        color: "black"
-                    },
-                    {
-                        id: 5,
-                        stateId: "star5",
-                        color: "black"
-                    }]
-                });
+    const [selectedMovie, setMovie] = useState({
+        movie: {},
+        starIcons: [{
+            id: 1,
+            stateId: "star1",
+            color: "black"
+        },
+        {
+            id: 2,
+            stateId: "star2",
+            color: "black"
+        },
+        {
+            id: 3,
+            stateId: "star3",
+            color: "black"
+        },
+        {
+            id: 4,
+            stateId: "star4",
+            color: "black"
+        },
+        {
+            id: 5,
+            stateId: "star5",
+            color: "black"
+        }]
+    });
 
-        
 
-        useEffect(()=>{
-            let currentState = selectedMovie;
-            currentState['movie'] = props.allMoviesList.filter((mov) => {
-                return mov.id === props.match.params.id
-            })[0];
-            setMovie({...currentState});
-        },[])
-        
-        const opts = {
-                        height: '300',
-                        width: '700',
-                        playerVars: {
-                            autoplay: 1
-                        }
-                    }
-                    
-        let movies = selectedMovie['movie'];
-        
-        const artistClickHandler = (url) => {
-                    window.location = url;
-                }
+    useEffect(() => {
+        let currentState = selectedMovie;
+        currentState['movie'] = props.releasedMovies.filter((mov) => {
+            return mov.id === props.match.params.id
+        })[0];
+        setMovie({ ...currentState });
+    }, [])
 
-        const starClickHandler = (id) => {
-                    let starIconList = [];
-                    for (let star of selectedMovie.starIcons) {
-                        let starNode = star;
-                        if (star.id <= id) {
-                            starNode.color = "yellow"
-                        }
-                        else {
-                            starNode.color = "black";
-            
-                        }
-                        starIconList.push(starNode);
-                    }
-                    let currentState = selectedMovie;
-                    currentState['starIcons'] = starIconList;
-                    setMovie({ ...currentState});
-                }
-                console.log(props.allMoviesList);
+    const opts = {
+        height: '300',
+        width: '700',
+        playerVars: {
+            autoplay: 1
+        }
+    }
+
+    let movies = selectedMovie['movie'];
+
+    const artistClickHandler = (url) => {
+        window.location = url;
+    }
+
+    const starClickHandler = (id) => {
+        let starIconList = [];
+        for (let star of selectedMovie.starIcons) {
+            let starNode = star;
+            if (star.id <= id) {
+                starNode.color = "yellow"
+            }
+            else {
+                starNode.color = "black";
+
+            }
+            starIconList.push(starNode);
+        }
+        let currentState = selectedMovie;
+        currentState['starIcons'] = starIconList;
+        setMovie({ ...currentState });
+    }
+    console.log(props.allMoviesList);
     return (
         <div className="details">
             <div className="back">
@@ -100,7 +99,7 @@ const Details = (props) => {
                     <br />
                     <div>
                         <Typography>
-                            <span className="bold">Genres: </span> {movies.genres!=null && movies.genres.join(', ') }
+                            <span className="bold">Genres: </span> {movies.genres != null && movies.genres.join(', ')}
                         </Typography>
                     </div>
                     <div>
@@ -120,9 +119,9 @@ const Details = (props) => {
                             <span className="bold">Trailer:</span>
                         </Typography>
                         <YouTube
-                            videoId={movies.trailer_url!=null && movies.trailer_url.split("?v=")[1]}
+                            videoId={movies.trailer_url != null && movies.trailer_url.split("?v=")[1]}
                             opts={opts}
-                            // onReady={this._onReady}
+                        // onReady={this._onReady}
                         />
                     </div>
                 </div>
