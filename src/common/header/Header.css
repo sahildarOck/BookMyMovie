@@ -11,12 +11,12 @@
     animation: rotation 8s infinite linear;
 }
 
-.user-state-btn {
-  margin-left: 10px;
-}
-
 .btn {
   float: right;
+}
+
+#book-show {
+  margin-right: 10px;
 }
 
 @keyframes rotation {

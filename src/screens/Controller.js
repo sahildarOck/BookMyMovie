@@ -188,7 +188,6 @@ const Controller = () => {
             </UserLoggedinContext.Provider>
 
             <Switch location={background || location}>
-                {/* <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} data = {data} search={(data) => filterMovies(data)} />} /> */}
                 <Route exact path='/' render={(props) => <Home {...props} data={data} search={(data) => filterMovies(data)} />} />
                 <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} />} />
                 <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
