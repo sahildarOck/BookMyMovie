@@ -1,5 +1,5 @@
-import React, { useContext } from "react";
-import { UserLoginContext } from "../UserLoginContext";
+import React, { useContext, useState } from "react";
+import { UserLoggedinContext } from "../UserLoggedinContext";
 import logo from "../../assets/logo.svg";
 import { Button } from "@material-ui/core";
 import "./Header.css";
@@ -7,14 +7,18 @@ import { Link, useLocation } from 'react-router-dom';
 
 const Header = ({ logoutHandler }) => {
 
-    const userLoggedIn = useContext(UserLoginContext);
+    const userLoggedIn = useContext(UserLoggedinContext);
 
-    const location = useLocation();
+    const [location, setLocation] = useState(useLocation());
+
+    // const location = useLocation();
 
     const displayBookShow = () => {
-        if (location.pathname === "/movie/*") { // TODO: Add expected location
+        debugger;
+        console.log(`Matching: ${location.pathname.match("/movie/:id'")}`);
+        if (location.pathname.match("/movie/:id'")) {
             if (userLoggedIn) {
-                return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow">BOOKSHOW</Button>;
+                return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow/:id">BOOKSHOW</Button>;
             } else {
                 return (
                     <Link
