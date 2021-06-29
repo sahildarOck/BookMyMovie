@@ -30,11 +30,6 @@ const Controller = () => {
         tempData.genres = await getGenres();
         tempData.artists = await getArtists();
 
-        console.log([...tempData.upcomingMovies])
-        console.log([...tempData.releasedMovies])
-        console.log([...tempData.genres])
-        console.log([...tempData.artists])
-
         setData({...tempData});
     }
 
@@ -99,7 +94,6 @@ const Controller = () => {
     }
 
     const registerUserHandler = async (registerUserForm) => {
-        console.log(registerUserForm);
         const rawResponse = await fetch("http://localhost:8085/api/v1/signup",
             {
                 method: "POST",
@@ -134,8 +128,6 @@ const Controller = () => {
 
         const responseHeaders = rawResponse.headers;
 
-        console.log(responseHeaders);
-
         if (rawResponse.status === 200) {
             window.localStorage.removeItem('user-details');
             window.localStorage.removeItem('access-token');
@@ -145,9 +137,6 @@ const Controller = () => {
     }
 
     const filterMovies = filterCriteria => {
-
-        debugger;
-
         let filteredResult = data.releasedMovies.filter(movies => {
             let filter = true;
 
@@ -191,7 +180,6 @@ const Controller = () => {
     }
 
     useEffect(() => {
-        debugger;
         loadData();
     }, [])
 

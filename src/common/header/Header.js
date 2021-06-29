@@ -14,8 +14,6 @@ const Header = ({ logoutHandler }) => {
     // const location = useLocation();
 
     const displayBookShow = () => {
-        debugger;
-        console.log(`Matching: ${location.pathname.match("/movie/:id'")}`);
         if (location.pathname.match("/movie/:id'")) {
             if (userLoggedIn) {
                 return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow/:id">BOOKSHOW</Button>;

@@ -61,7 +61,6 @@ const Home = ({ history, data, search }) => {
     });
 
     const [displayMoviesList, setDisplayMoviesList] = useState(data.releasedMovies);
-    console.log(`Display: ${JSON.stringify(displayMoviesList)}`);
 
     const movieNameChangeHandler = (event) => {
         const filter = filterCriteria;
@@ -99,8 +98,6 @@ const Home = ({ history, data, search }) => {
 
     const applyClickHandler = async () => {
         const filteredMovieList = await search(filterCriteria);
-        debugger;
-        console.log(`Filtered Movie List: ${JSON.stringify(filteredMovieList)}`);
         setDisplayMoviesList(filteredMovieList);
     }
 
