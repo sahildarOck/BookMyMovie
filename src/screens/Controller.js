@@ -13,6 +13,8 @@ const Controller = () => {
     const location = useLocation();
     const background = location.state && location.state.background;
 
+    const baseUrl = "http://localhost:8085/api/v1/";
+
     const [data, setData] = useState({
         upcomingMovies: [],
         releasedMovies: [],
@@ -35,7 +37,7 @@ const Controller = () => {
 
     const getMoviesList = async () => {
         const moviesList = [];
-        const rawResponse = await fetch("http://localhost:8085/api/v1/movies?page=1&limit=20");
+        const rawResponse = await fetch(baseUrl + "movies?page=1&limit=20");
         const data = await rawResponse.json();
 
         moviesList.push(data.movies.filter(item => item.status === 'PUBLISHED'));
@@ -46,23 +48,23 @@ const Controller = () => {
     }
 
     const getGenres = async () => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/genres")
+        const rawResponse = await fetch(baseUrl + "genres")
         const data = await rawResponse.json()
         return data.genres;
     }
 
     const getArtists = async () => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/artists")
+        const rawResponse = await fetch(baseUrl + "artists")
         const data = await rawResponse.json()
         return data.artists;
     }
 
     const isUserLoggedIn = () => {
-        return getAccessToken() !== null;
+        return getAuthorization() !== null;
     }
 
-    const getAccessToken = () => {
-        return window.localStorage.getItem('access-token');
+    const getAuthorization = () => {
+        return `Bearer ${window.localStorage.getItem('access-token')}`;
     }
 
     const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
@@ -70,7 +72,7 @@ const Controller = () => {
     const loginHandler = async (username, password) => {
         const authorization = window.btoa(`${username}:${password}`);
 
-        const rawResponse = await fetch("http://localhost:8085/api/v1/auth/login",
+        const rawResponse = await fetch(baseUrl + "auth/login",
             {
                 method: "POST",
                 headers: {
@@ -94,7 +96,7 @@ const Controller = () => {
     }
 
     const registerUserHandler = async (registerUserForm) => {
-        const rawResponse = await fetch("http://localhost:8085/api/v1/signup",
+        const rawResponse = await fetch(baseUrl + "signup",
             {
                 method: "POST",
                 headers: {
@@ -114,14 +116,12 @@ const Controller = () => {
     }
 
     const logoutHandler = async () => {
-        const authorization = getAccessToken();
-
-        const rawResponse = await fetch("http://localhost:8085/api/v1/auth/logout",
+        const rawResponse = await fetch(baseUrl + "auth/logout",
             {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json;charset=UTF-8',
-                    'authorization': `Bearer ${authorization}`
+                    'authorization': `${getAuthorization()}`
                 }
             }
         );
@@ -190,7 +190,7 @@ const Controller = () => {
             <Switch location={background || location}>
                 <Route exact path='/' render={(props) => <Home {...props} data={data} search={(data) => filterMovies(data)} />} />
                 <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} />} />
-                <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
+                <Route path='/bookshow/:id' render={(props) => <BookShow {...props} baseUrl={baseUrl} />} />
                 <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
             </Switch>
 

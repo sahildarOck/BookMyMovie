@@ -12,9 +12,10 @@ const Header = ({ logoutHandler }) => {
     const location = useLocation();
 
     const displayBookShow = () => {
-        if (location.pathname.includes("/movie/")) {
+        if (location.pathname.match('/movie/.+')) {
             if (userLoggedIn) {
-                return <Button id="book-show" variant="contained" color="primary" component={Link} to="/bookShow/:id">BOOKSHOW</Button>;
+                let url = `/bookShow/${location.pathname.split('/')[2]}`;
+                return <Button id="book-show" variant="contained" color="primary" component={Link} to={url}>BOOKSHOW</Button>;
             } else {
                 return (
                     <Link

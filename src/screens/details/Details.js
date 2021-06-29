@@ -79,7 +79,7 @@ const Details = (props) => {
         currentState['starIcons'] = starIconList;
         setMovie({ ...currentState });
     }
-    
+
     return (
         <div className="details">
             <div className="back">
