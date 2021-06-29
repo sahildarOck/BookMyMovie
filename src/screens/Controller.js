@@ -1,4 +1,4 @@
-import React, { useState, useEffect, useCallback } from "react";
+import React, { useState, useEffect } from "react";
 import Header from "../common/header/Header";
 import Home from '../screens/home/Home';
 import Details from '../screens/details/Details';
@@ -30,7 +30,7 @@ const Controller = () => {
         tempData.genres = await getGenres();
         tempData.artists = await getArtists();
 
-        setData({...tempData});
+        setData({ ...tempData });
     }
 
     const getMoviesList = async () => {
@@ -126,8 +126,6 @@ const Controller = () => {
             }
         );
 
-        const responseHeaders = rawResponse.headers;
-
         if (rawResponse.status === 200) {
             window.localStorage.removeItem('user-details');
             window.localStorage.removeItem('access-token');
@@ -190,7 +188,8 @@ const Controller = () => {
             </UserLoggedinContext.Provider>
 
             <Switch location={background || location}>
-                <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} data = {data} search={(data) => filterMovies(data)} />} />
+                {/* <Route exact path='/' render={({ history }, props) => <Home {...props} history={history} data = {data} search={(data) => filterMovies(data)} />} /> */}
+                <Route exact path='/' render={(props) => <Home {...props} data={data} search={(data) => filterMovies(data)} />} />
                 <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} />} />
                 <Route path='/bookshow/:id' render={(props) => <BookShow {...props} />} />
                 <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
@@ -202,4 +201,4 @@ const Controller = () => {
     )
 }
 
-export default Controller; 
+export default Controller;

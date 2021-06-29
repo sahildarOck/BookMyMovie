@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useContext } from "react";
 import { UserLoggedinContext } from "../UserLoggedinContext";
 import logo from "../../assets/logo.svg";
 import { Button } from "@material-ui/core";
@@ -9,9 +9,7 @@ const Header = ({ logoutHandler }) => {
 
     const userLoggedIn = useContext(UserLoggedinContext);
 
-    const [location, setLocation] = useState(useLocation());
-
-    // const location = useLocation();
+    const location = useLocation();
 
     const displayBookShow = () => {
         if (location.pathname.match("/movie/:id'")) {

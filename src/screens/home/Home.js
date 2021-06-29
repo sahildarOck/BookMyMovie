@@ -16,6 +16,7 @@ import Checkbox from '@material-ui/core/Checkbox';
 import ListItemText from '@material-ui/core/ListItemText';
 import TextField from '@material-ui/core/TextField';
 import Button from '@material-ui/core/Button';
+import { useHistory } from 'react-router-dom'
 
 const styles = makeStyles((theme) => ({
     root: {
@@ -47,9 +48,11 @@ const styles = makeStyles((theme) => ({
     }
 }));
 
-const Home = ({ history, data, search }) => {
+const Home = ({ data, search }) => {
 
     const classes = styles();
+
+    const history = useHistory();
 
     const [filterCriteria, setFilterCriteria] = useState({
         movieName: "",
@@ -60,7 +63,7 @@ const Home = ({ history, data, search }) => {
 
     });
 
-    const [displayMoviesList, setDisplayMoviesList] = useState(data.releasedMovies);
+    const [displayMoviesList, setDisplayMoviesList] = useState([...data.releasedMovies]);
 
     const movieNameChangeHandler = (event) => {
         const filter = filterCriteria;
