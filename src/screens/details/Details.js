@@ -62,6 +62,14 @@ const Details = (props) => {
         window.location = url;
     }
 
+    const getVideoId = () => {
+        if (movies.trailer_url != null) {
+            return movies.trailer_url.split("?v=")[1];
+        } else {
+            return '';
+        }
+    }
+
     const starClickHandler = (id) => {
         let starIconList = [];
         for (let star of selectedMovie.starIcons) {
@@ -94,7 +102,7 @@ const Details = (props) => {
 
                 <div className="middleDetails">
                     <div>
-                        <Typography variant="headline" component="h2">{movies.title} </Typography>
+                        <Typography variant="inherit" component="h2">{movies.title} </Typography>
                     </div>
                     <br />
                     <div>
@@ -119,7 +127,7 @@ const Details = (props) => {
                             <span className="bold">Trailer:</span>
                         </Typography>
                         <YouTube
-                            videoId={movies.trailer_url != null && movies.trailer_url.split("?v=")[1]}
+                            videoId={getVideoId()}
                             opts={opts}
                         />
                     </div>
