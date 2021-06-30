@@ -6,11 +6,15 @@ import GridList from '@material-ui/core/GridList';
 import GridListTile from '@material-ui/core/GridListTile';
 import GridListTileBar from '@material-ui/core/GridListTileBar';
 import StarBorderIcon from '@material-ui/icons/StarBorder';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 
 const Details = (props) => {
 
-    const [selectedMovie, setMovie] = useState({
+    const location = useLocation();
+
+    const baseUrl = props.baseUrl;
+
+    const [data, setData] = useState({
         movie: {},
         starIcons: [{
             id: 1,
@@ -39,14 +43,17 @@ const Details = (props) => {
         }]
     });
 
-
     useEffect(() => {
-        let currentState = selectedMovie;
-        currentState['movie'] = props.releasedMovies.filter((mov) => {
-            return mov.id === props.match.params.id
-        })[0];
-        setMovie({ ...currentState });
-    }, [])
+        async function setMovieDataInState() {
+            let currentData = data;
+
+            const rawResponse = await fetch(baseUrl + "movies/" + location.pathname.split("/")[2]);
+            currentData['movie'] = await rawResponse.json();
+
+            setData({ ...currentData })
+        }
+        setMovieDataInState();
+    }, []);
 
     const opts = {
         height: '300',
@@ -56,7 +63,7 @@ const Details = (props) => {
         }
     }
 
-    let movies = selectedMovie['movie'];
+    let movies = data['movie'];
 
     const artistClickHandler = (url) => {
         window.location = url;
@@ -72,7 +79,7 @@ const Details = (props) => {
 
     const starClickHandler = (id) => {
         let starIconList = [];
-        for (let star of selectedMovie.starIcons) {
+        for (let star of data.starIcons) {
             let starNode = star;
             if (star.id <= id) {
                 starNode.color = "yellow"
@@ -83,9 +90,9 @@ const Details = (props) => {
             }
             starIconList.push(starNode);
         }
-        let currentState = selectedMovie;
+        let currentState = data;
         currentState['starIcons'] = starIconList;
-        setMovie({ ...currentState });
+        setData({ ...currentState });
     }
 
     return (
@@ -102,7 +109,7 @@ const Details = (props) => {
 
                 <div className="middleDetails">
                     <div>
-                        <Typography variant="inherit" component="h2">{movies.title} </Typography>
+                        <Typography variant="headline" component="h2">{movies.title} </Typography>
                     </div>
                     <br />
                     <div>
@@ -137,7 +144,7 @@ const Details = (props) => {
                     <Typography>
                         <span className="bold">Rate this movie: </span>
                     </Typography>
-                    {selectedMovie.starIcons.map(star => (
+                    {data.starIcons.map(star => (
                         <StarBorderIcon
                             className={star.color}
                             key={"star" + star.id}

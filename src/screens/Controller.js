@@ -41,7 +41,6 @@ const Controller = () => {
         const data = await rawResponse.json();
 
         moviesList.push(data.movies.filter(item => item.status === 'PUBLISHED'));
-
         moviesList.push(data.movies.filter(item => item.status === 'RELEASED'));
 
         return moviesList;
@@ -60,11 +59,11 @@ const Controller = () => {
     }
 
     const isUserLoggedIn = () => {
-        return getAuthorization() !== null;
+        return getAccessToken() !== null;
     }
 
-    const getAuthorization = () => {
-        return `Bearer ${window.localStorage.getItem('access-token')}`;
+    const getAccessToken = () => {
+        return window.localStorage.getItem('access-token');
     }
 
     const [userLoggedIn, setUserLoggedIn] = useState(isUserLoggedIn());
@@ -116,12 +115,13 @@ const Controller = () => {
     }
 
     const logoutHandler = async () => {
+
         const rawResponse = await fetch(baseUrl + "auth/logout",
             {
                 method: "POST",
                 headers: {
                     'Accept': 'application/json;charset=UTF-8',
-                    'authorization': `${getAuthorization()}`
+                    'authorization': `Bearer ${getAccessToken()}`
                 }
             }
         );
@@ -189,7 +189,7 @@ const Controller = () => {
 
             <Switch location={background || location}>
                 <Route exact path='/' render={(props) => <Home {...props} data={data} search={(data) => filterMovies(data)} />} />
-                <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} />} />
+                <Route path='/movie/:id' render={(props) => <Details {...props} releasedMovies={data.releasedMovies} baseUrl={baseUrl} />} />
                 <Route path='/bookshow/:id' render={(props) => <BookShow {...props} baseUrl={baseUrl} />} />
                 <Route path='/confirm/:id' render={(props) => <Confirmation {...props} />} />
             </Switch>
